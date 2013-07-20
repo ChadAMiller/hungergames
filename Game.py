@@ -41,14 +41,15 @@ class Game(object):
     def play_round(self):
         # TODO: Refactor this beast
         self.round += 1
-        self.attempts += self.P-1
         m = self.calculate_m()
         
         random.shuffle(self.players)
-        reputation_list = tuple(p[2]/self.attempts for p in self.players)
+        reputation_list = tuple(0 if self.attempts == 0 else p[2]/self.attempts for p in self.players)
         
-        strategies = [p[0].hunt_choices(self.round, p[1], p[2]/self.attempts,
+        strategies = [p[0].hunt_choices(self.round, p[1], 0 if self.attempts == 0 else p[2]/self.attempts,
                                         m, reputation_list) for p in self.players]
+        
+        self.attempts += self.P-1
         
         for i in range(self.P):
             strategies[i][i] = 's'
