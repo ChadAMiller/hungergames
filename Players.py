@@ -1,4 +1,4 @@
-class Player:
+class Player(object):
     '''Base class so I don't have to repeat bookkeeping stuff'''
     
     def __repr__(self):
