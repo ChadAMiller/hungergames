@@ -5,6 +5,11 @@ import random
 MIN_ROUNDS = 300
 AVERAGE_ROUNDS = 1000
 
+# Indexes into player list for better readability
+PLAYER = 0
+FOOD = 1
+HUNTS = 2
+
 def payout(*args):
     '''Times 3 because this calculates one person's share'''
     return args.count('h')*3
@@ -14,12 +19,12 @@ class Game(object):
         self.verbose = verbose
         self.max_rounds = MIN_ROUNDS + int(random.expovariate(1/(AVERAGE_ROUNDS-MIN_ROUNDS)))
         self.round = 0
-        self.attempts = 0
+        self.hunt_opportunities = 0
         
         self.players = players # to set self.P
         food = [300*(self.P-1)]*self.P
-        reputation = [0]*self.P
-        self.players = [[p,f,r] for p,f,r in zip(players,food,reputation)]
+        total_hunts = [0]*self.P
+        self.players = [[p,f,th] for p,f,th in zip(players,food,total_hunts)]
         
         
     @property
@@ -44,16 +49,25 @@ class Game(object):
         m = self.calculate_m()
         
         random.shuffle(self.players)
-        reputation_list = tuple(0 if self.attempts == 0 else p[2]/self.attempts for p in self.players)
-        
-        strategies = [p[0].hunt_choices(self.round, p[1], 0 if self.attempts == 0 else p[2]/self.attempts,
-                                        m, reputation_list) for p in self.players]
-        
-        self.attempts += self.P-1
-        
-        for i in range(self.P):
-            strategies[i][i] = 's'
 
+        # reputation is total number of times player has hunted / total number of times they were offered the oppurtunity
+        reputation_list = list(0 if self.hunt_opportunities == 0 else p[HUNTS]/self.hunt_opportunities for p in self.players)
+        
+        strategies = []
+        for i,p in enumerate(self.players):
+            # create a copy of the reputation list without this player in it
+            player_reputation_list = reputation_list[:i]+reputation_list[i+1:]
+
+            strategy = p[PLAYER].hunt_choices(self.round, p[FOOD], 
+                                0 if self.hunt_opportunities == 0 else p[HUNTS]/self.hunt_opportunities,
+                                m, player_reputation_list)
+
+            strategy.insert(i,'s')
+            strategies.append(strategy)
+
+
+        self.hunt_opportunities += self.P-1
+        
         results = [[0 for i in range(self.P)] for j in range(self.P)]                        
         
         for i in range(self.P):
@@ -68,16 +82,16 @@ class Game(object):
             food = sum(result)
             hunts = strat.count('h')
             
-            player[1] += food-4*hunts-2*(self.P-1)+bonus
+            player[FOOD] += food-4*hunts-2*(self.P-1)+bonus
             
-            player[2] += hunts
+            player[HUNTS] += hunts
             
-            player[0].hunt_outcomes(food)
-            player[0].round_end(bonus, m, total_hunts)
+            player[PLAYER].hunt_outcomes(food)
+            player[PLAYER].round_end(bonus, m, total_hunts)
             
             
         if self.verbose:
-            print([(name, food, hunts/self.attempts) for name, food, hunts in self.players])
+            print([(name, food, hunts/self.hunt_opportunities) for name, food, hunts in self.players])
                    
         
         if self.game_over():
@@ -85,7 +99,7 @@ class Game(object):
             
         
     def game_over(self):
-        self.players = [p for p in self.players if p[1] > 0]
+        self.players = [p for p in self.players if p[FOOD] > 0]
         return (self.P < 2) or (self.round > self.max_rounds)
         
         
