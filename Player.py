@@ -18,7 +18,7 @@ class BasePlayer(object):
         try:
             return self.name
         except AttributeError:
-            return NotImplemented
+            return super(BasePlayer, self).__repr__()
     
     def hunt_choices(*args, **kwargs):
         raise NotImplementedError("You must define a strategy!")
