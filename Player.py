@@ -1,3 +1,13 @@
+# This file is intended to be a final submission. python tester.py Player.py
+# should work at all times. If it does not, there is a bug.
+# If you're just trying to test a solution, scroll down to the Player
+# class.
+
+# This file is intended to be in the same format as a valid solution, so
+# that users can edit their solution into Player and then submit just this
+# file to the contest. If you see any reason this would not work, please submit
+# an Issue to https://github.com/ChadAMiller/hungergames/issues or email me.
+
 class BasePlayer(object):
     '''
     Base class so I don't have to repeat bookkeeping stuff.
@@ -22,7 +32,7 @@ class BasePlayer(object):
 
 class Player(BasePlayer):
     '''
-    If you're just trying to test your solution, this is the one to edit.
+    Your strategy starts here.
     '''
     
     def hunt_choices(

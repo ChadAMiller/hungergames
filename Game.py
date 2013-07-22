@@ -1,6 +1,9 @@
 from __future__ import division, print_function
 import random
 
+# Primary engine for the game simulation. You shouldn't need to edit
+# any of this if you're just testing strategies.
+
 def payout(s1,s2):
     if s1 == 'h':
         if s2 == 'h':
@@ -35,7 +38,23 @@ class GamePlayer(object):
         
             
     
-class Game(object):   
+class Game(object):
+    '''
+    Game(players, verbose=True, min_rounds=300, average_rounds=1000)
+    
+    Primary game engine for the sim. players should be a list of players
+    as defined in Player.py or bots.py. verbose determines whether the game
+    will print the result of individual rounds to the console or not.
+    
+    Per the rules, the game has a small but constant probability of ending
+    each round after min_rounds. The current defaults are completely arbitrary;
+    feel free to play with them.
+        
+    Call game.play_game() to run the entire game at once, or game.play_round()
+    to run one round at a time.
+    
+    See app.py for a bare-minimum test game.
+    '''   
     def __init__(self, players, verbose=True, min_rounds=300, average_rounds=1000):
         self.verbose = verbose
         self.max_rounds = min_rounds + int(random.expovariate(1/(average_rounds-min_rounds)))
@@ -65,27 +84,25 @@ class Game(object):
             
         
     def play_round(self):
-        # TODO: Refactor this beast
+        # Get beginning of round stats
         self.round += 1
         m = self.calculate_m()
         
+        # Beginning of round setup
         random.shuffle(self.players)
-
         reputations = tuple(player.rep for player in self.players)
         
+        # Get player strategies
         strategies = []
         for i,p in enumerate(self.players):
-            # create a copy of the reputation list without this player in it
             opp_reputations = reputations[:i]+reputations[i+1:]
-            
             strategy = p.player.hunt_choices(self.round, p.food, p.rep, m, opp_reputations)
 
             strategy.insert(i,'s')
             strategies.append(strategy)
 
-
+        # Perform the hunts
         self.hunt_opportunities += self.P-1
-        
         results = [[0 for i in range(self.P)] for j in range(self.P)]                        
         
         for i in range(self.P):
@@ -96,6 +113,7 @@ class Game(object):
         total_hunts = sum(s.count('h') for s in strategies)//2
         bonus = self.m_bonus if total_hunts >= m else 0
         
+        # Award food and let players run cleanup tasks
         for strat, result, player in zip(strategies, results, self.players):
             food = sum(result)
             hunts = strat.count('h')
