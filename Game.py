@@ -9,7 +9,7 @@ def payout(s1,s2):
             return -3
     else:
         if s2 == 'h':
-            return 3
+            return 1
         else:
             return -2
             
