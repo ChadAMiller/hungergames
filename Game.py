@@ -1,15 +1,6 @@
 from __future__ import division, print_function
 import random
 
-# I have no idea what these numbers should be yet
-MIN_ROUNDS = 300
-AVERAGE_ROUNDS = 1000
-
-# Indexes into player list for better readability
-PLAYER = 0
-FOOD = 1
-HUNTS = 2
-
 def payout(s1,s2):
     if s1 == 'h':
         if s2 == 'h':
@@ -21,18 +12,40 @@ def payout(s1,s2):
             return 3
         else:
             return -2
+            
+            
+class GamePlayer(object):
+    '''
+    Wrapper class for players to keep track of food etc
+    Parent is the main game instance, so we can just ask
+    how many hunts have happened.
+    '''
+    def __init__(self, parent, player, food, hunts=0):
+        self.parent = parent
+        self.player = player
+        self.food = food
+        self.hunts = hunts
+        
+    @property
+    def rep(self):
+        return self.hunts/self.parent.hunt_opportunities if self.parent.hunt_opportunities else 0
+        
+    def __repr__(self):
+        return '{} {} {:.3f}'.format(self.player, self.food, self.rep)
+        
+            
     
 class Game(object):   
-    def __init__(self, players, verbose=True):
+    def __init__(self, players, verbose=True, min_rounds=300, average_rounds=1000):
         self.verbose = verbose
-        self.max_rounds = MIN_ROUNDS + int(random.expovariate(1/(AVERAGE_ROUNDS-MIN_ROUNDS)))
+        self.max_rounds = min_rounds + int(random.expovariate(1/(average_rounds-min_rounds)))
         self.round = 0
         self.hunt_opportunities = 0
         
         self.players = players # to set self.P
-        food = [300*(self.P-1)]*self.P
-        total_hunts = [0]*self.P
-        self.players = [[p,f,th] for p,f,th in zip(players,food,total_hunts)]
+        start_food = 300*(self.P-1)*self.P
+        
+        self.players = [GamePlayer(self,p,start_food) for p in players]
         
         
     @property
@@ -58,17 +71,14 @@ class Game(object):
         
         random.shuffle(self.players)
 
-        # reputation is total number of times player has hunted / total number of times they were offered the oppurtunity
-        reputation_list = list(0 if self.hunt_opportunities == 0 else p[HUNTS]/self.hunt_opportunities for p in self.players)
+        reputations = tuple(player.rep for player in self.players)
         
         strategies = []
         for i,p in enumerate(self.players):
             # create a copy of the reputation list without this player in it
-            player_reputation_list = reputation_list[:i]+reputation_list[i+1:]
-
-            strategy = p[PLAYER].hunt_choices(self.round, p[FOOD], 
-                                0 if self.hunt_opportunities == 0 else p[HUNTS]/self.hunt_opportunities,
-                                m, player_reputation_list)
+            opp_reputations = reputations[:i]+reputations[i+1:]
+            
+            strategy = p.player.hunt_choices(self.round, p.food, p.rep, m, opp_reputations)
 
             strategy.insert(i,'s')
             strategies.append(strategy)
@@ -80,9 +90,8 @@ class Game(object):
         
         for i in range(self.P):
             for j in range(i+1, self.P):
-                if i != j:
-                    results[i][j] = payout(strategies[i][j], strategies[j][i])
-                    results[j][i] = payout(strategies[j][i], strategies[i][j])
+                results[i][j] = payout(strategies[i][j], strategies[j][i])
+                results[j][i] = payout(strategies[j][i], strategies[i][j])
                 
         total_hunts = sum(s.count('h') for s in strategies)//2
         bonus = self.m_bonus if total_hunts >= m else 0
@@ -90,14 +99,15 @@ class Game(object):
         for strat, result, player in zip(strategies, results, self.players):
             food = sum(result)
             hunts = strat.count('h')
-            player[FOOD] += food+bonus
-            player[HUNTS] += hunts
-            player[PLAYER].hunt_outcomes(result)
-            player[PLAYER].round_end(bonus, m, total_hunts)
             
+            player.food += food+bonus
+            player.hunts += hunts
+            player.player.hunt_outcomes(result)
+            player.player.round_end(bonus, m, total_hunts)
             
+                    
         if self.verbose:
-            print([(name, food, hunts/self.hunt_opportunities) for name, food, hunts in self.players])
+            print(self.players)
                    
         
         if self.game_over():
@@ -105,7 +115,7 @@ class Game(object):
             
         
     def game_over(self):
-        self.players = [p for p in self.players if p[FOOD] > 0]
+        self.players = [p for p in self.players if p.food > 0]
         return (self.P < 2) or (self.round > self.max_rounds)
         
         
@@ -119,6 +129,6 @@ class Game(object):
             try:
                 self.play_round()
             except StopIteration:
-                print([(name, food, hunts/self.hunt_opportunities) for name, food, hunts in self.players])
+                print(self.players)
                 break
         
