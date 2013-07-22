@@ -1,6 +1,6 @@
 from __future__ import division, print_function
 from Game import Game
-from Players import Pushover, Freeloader, Alternator
+from bots import Pushover, Freeloader, Alternator
 
 # Bare minimum test game. See README.md for details.
 

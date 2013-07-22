@@ -1,23 +1,6 @@
-class Player(object):
-    '''Base class so I don't have to repeat bookkeeping stuff'''
-    
-    def __repr__(self):
-        try:
-            return self.name
-        except AttributeError:
-            return NotImplemented
-    
-    def hunt_choices(*args, **kwargs):
-        raise NotImplementedError("You must define a strategy!")
-        
-    def hunt_outcomes(*args, **kwargs):
-        pass
-        
-    def round_end(*args, **kwargs):
-        pass
+from Player import BasePlayer
 
-
-class Pushover(Player):
+class Pushover(BasePlayer):
     '''Player that always hunts.'''
     def __init__(self):
         self.name = "Pushover"
@@ -33,7 +16,7 @@ class Pushover(Player):
         return ['h']*len(player_reputations)
 
         
-class Freeloader(Player):
+class Freeloader(BasePlayer):
     '''Player that never hunts.'''
     
     def __init__(self):
@@ -50,7 +33,7 @@ class Freeloader(Player):
         return ['s']*len(player_reputations)
         
 
-class Alternator(Player):
+class Alternator(BasePlayer):
     '''Player that alternates between hunting and not.'''
     def __init__(self):
         self.name = "Alternator"

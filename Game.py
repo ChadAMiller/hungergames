@@ -65,14 +65,13 @@ class Game(object):
         bonus = self.m_bonus if total_hunts >= m else 0
         
         for strat, result, player in zip(strategies, results, self.players):
-            food = sum(result)
             hunts = strat.count('h')
+            dfood = sum(result)-4*hunts-2*(self.P-1)+bonus
             
-            player[1] += food-4*hunts-2*(self.P-1)+bonus
-            
+            player[1] += dfood
             player[2] += hunts
             
-            player[0].hunt_outcomes(food)
+            player[0].hunt_outcomes(dfood)
             player[0].round_end(bonus, m, total_hunts)
             
             
