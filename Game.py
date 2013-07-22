@@ -10,9 +10,17 @@ PLAYER = 0
 FOOD = 1
 HUNTS = 2
 
-def payout(*args):
-    '''Times 3 because this calculates one person's share'''
-    return args.count('h')*3
+def payout(s1,s2):
+    if s1 == 'h':
+        if s2 == 'h':
+            return 0
+        else:
+            return -3
+    else:
+        if s2 == 'h':
+            return 3
+        else:
+            return -2
     
 class Game(object):   
     def __init__(self, players, verbose=True):
@@ -73,7 +81,8 @@ class Game(object):
         for i in range(self.P):
             for j in range(i+1, self.P):
                 if i != j:
-                    results[i][j] = results[j][i] = payout(strategies[i][j], strategies[j][i])
+                    results[i][j] = payout(strategies[i][j], strategies[j][i])
+                    results[j][i] = payout(strategies[j][i], strategies[i][j])
                 
         total_hunts = sum(s.count('h') for s in strategies)//2
         bonus = self.m_bonus if total_hunts >= m else 0
@@ -81,12 +90,9 @@ class Game(object):
         for strat, result, player in zip(strategies, results, self.players):
             food = sum(result)
             hunts = strat.count('h')
-            
-            player[FOOD] += food-4*hunts-2*(self.P-1)+bonus
-            
+            player[FOOD] += food+bonus
             player[HUNTS] += hunts
-            
-            player[PLAYER].hunt_outcomes(food)
+            player[PLAYER].hunt_outcomes(result)
             player[PLAYER].round_end(bonus, m, total_hunts)
             
             
@@ -113,6 +119,6 @@ class Game(object):
             try:
                 self.play_round()
             except StopIteration:
-                print(self.players)
+                print([(name, food, hunts/self.hunt_opportunities) for name, food, hunts in self.players])
                 break
         
