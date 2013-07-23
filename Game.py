@@ -110,7 +110,7 @@ class Game(object):
                 results[i][j] = payout(strategies[i][j], strategies[j][i])
                 results[j][i] = payout(strategies[j][i], strategies[i][j])
                 
-        total_hunts = sum(s.count('h') for s in strategies)//2
+        total_hunts = sum(s.count('h') for s in strategies)
         bonus = self.m_bonus if total_hunts >= m else 0
         
         # Award food and let players run cleanup tasks
