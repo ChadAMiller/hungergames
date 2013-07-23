@@ -48,6 +48,8 @@ Thanks to the many people who've submitted/suggested changes! I've already gotte
 
 *    Because `Game.py` is pretending to be the server, it will not "trust" player instances at all. It will store its own state information like reputations and food even if the players are also storing that information.
 
+*    `bots.py` must have no global variables other than class definitions (so that `from bots import *` is safe)
+
 *    Due to interest from people who don't know Python or even programming at all yet, I imagine there will be some people that just want to run simulations and some that want to patch the engine. To accomodate those people, my goal is that this engine be 100% usable by someone who only edits `Player.py`, `app.py`, and perhaps `bots.py`. The other files, particularly `Game.py` should be usable as "black boxes".
 
 *    Toward that end, my comment philsophy is that `Player.py` should be friendly to even people who learned Python yesterday, while `Game.py` will be a lot sparser because I assume contributors know what they're doing and don't want to clutter the code too much. Detailed docstrings are encouraged everywhere.

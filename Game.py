@@ -35,6 +35,9 @@ class GamePlayer(object):
         
     def __repr__(self):
         return '{} {} {:.3f}'.format(self.player, self.food, self.rep)
+
+    def __str__(self):
+        return "Player {} now has {} food and a reputation of {:.3f}".format(self.player, self.food, self.rep)
         
             
     
@@ -84,8 +87,10 @@ class Game(object):
             
         
     def play_round(self):
-        # Get beginning of round stats
+        # Get beginning of round stats        
         self.round += 1
+        if(self.verbose):
+            print ("\nBegin Round " + str(self.round) + ":")
         m = self.calculate_m()
         
         # Beginning of round setup
@@ -109,10 +114,18 @@ class Game(object):
             for j in range(self.P):
                 if i!=j:
                     results[i].append(payout(strategies[i][j], strategies[j][i]))
-               
+                
+        total_hunts = sum(s.count('h') for s in strategies)		
+        
+        if (self.verbose):
+            print ("There were {} hunts of {} needed for bonus".format(total_hunts, self.m_bonus))
 
-        total_hunts = sum(s.count('h') for s in strategies)
-        bonus = self.m_bonus if total_hunts >= m else 0
+        if total_hunts >= self.m_bonus:
+            bonus = m 
+            if (self.verbose):
+                print("Cooperation Threshold Acheived. Bonus of " + str(m) + " awarded to each player")
+        else:
+	        bonus = 0
         
         # Award food and let players run cleanup tasks
         for strat, result, player in zip(strategies, results, self.players):
@@ -126,15 +139,22 @@ class Game(object):
             
                     
         if self.verbose:
-            print(self.players)
+            for p in self.players:
+                print (p)
                    
         
-        if self.game_over():
+        if self.game_over():            
+            print ("Game Completed after {} rounds".format(self.round))
             raise StopIteration
             
         
-    def game_over(self):
+    def game_over(self):        
+        starved = [p for p in self.players if p.food <= 0]
+        for p in starved:
+            print ("{} has starved and been eliminated in round {}".format(p.player.name, self.round))
+        
         self.players = [p for p in self.players if p.food > 0]
+        
         return (self.P < 2) or (self.round > self.max_rounds)
         
         
@@ -143,11 +163,20 @@ class Game(object):
         Preferred way to run the game to completion
         Written this way so that I can step through rounds one at a time
         '''
+        print ("Playing the game to the end:")
         
         while True:
             try:
                 self.play_round()
             except StopIteration:
-                print(self.players)
+                if len(self.players) <= 0:
+                    print ("Everyone starved")
+                elif (len(self.players) == 1):
+                    print ("The winner is: " + self.players[0].player.name)
+                else:
+                    survivors = sorted(self.players, key=lambda player: player.food, reverse=True)
+                    print ("The winner is: " + survivors[0].player.name)
+                    print ("Multiple survivors:")
+                    print (survivors)
                 break
         

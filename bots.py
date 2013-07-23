@@ -79,7 +79,7 @@ class Random(BasePlayer):
     '''
     
     def __init__(self, p_hunt):
-        self.name = "Random"
+        self.name = "Random" + str(p_hunt)
         self.p_hunt = p_hunt
 
     def hunt_choices(

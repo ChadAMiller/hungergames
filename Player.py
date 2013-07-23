@@ -16,7 +16,7 @@ class BasePlayer(object):
     Do not edit unless you're working on the simulation.
     '''
     
-    def __repr__(self):
+    def __str__(self):
         try:
             return self.name
         except AttributeError:
