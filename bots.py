@@ -86,4 +86,19 @@ class Random(BasePlayer):
                     player_reputations,
                     ):
         return ['h' if random.random() < self.p_hunt else 's' for i in range(len(player_reputations))]
+
+class FairHunter(BasePlayer):
+    '''Player that tries to be fair by hunting with same probability as each opponent'''
+    def __init__(self):
+        self.name = "FairHunter"
+
+    def hunt_choices(
+                self,
+                round_number,
+                current_food,
+                current_reputation,
+                m,
+                player_reputations,
+                ):
+        return ['h' if random.random() < rep else 's' for rep in player_reputations]
         
