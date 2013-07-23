@@ -6,6 +6,14 @@ This is an OOP solution where player classes are expected to inherit from a base
 
 I included the three sample players from the sample code, under the names `Pushover`, `Freeloader`, and `Alternator`.
 
+There are a couple other sample players implemented in bots.py.  These are `Random`, `MaxRepHunter`, and `FairHunter`.  
+
+The Random player decides to hunt with some probability p and slack with probability 1-p.  You can decide this probability when the player is created.  For a Random player that hunts 50% of the time and slacks 50% of the time you would create the player with Random(0.5).
+
+The MaxRepHunter is a player who only hunts with players who have the current maximum reputation.  A common question in the discussion section was how to beat someone who only slacks (Freeloader).  A pair of MaxRephunter's will beat a group of any size of Freeloaders.  Give it a shot.
+
+The FairHunter is a player who tries to play fair by hunting with probability equal to opponents reputation.  This means he will hunt with hunters and slack with slackers.  He never tries to take advantage of hunters.
+
 ## Usage
 
 *    `python app.py` runs a sample game with exactly one of each test bot. It's 3 lines of code and pretty easy to generalize to whatever custom players you might make up.
