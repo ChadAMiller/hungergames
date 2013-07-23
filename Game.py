@@ -62,7 +62,7 @@ class Game(object):
         self.hunt_opportunities = 0
         
         self.players = players # to set self.P
-        start_food = 300*(self.P-1)*self.P
+        start_food = 300*(self.P-1)
         
         self.players = [GamePlayer(self,p,start_food) for p in players]
         
