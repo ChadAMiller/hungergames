@@ -35,6 +35,9 @@ class GamePlayer(object):
         
     def __repr__(self):
         return '{} {} {:.3f}'.format(self.player, self.food, self.rep)
+
+    def __str__(self):
+        return "Player {} now has {} food and a reputation of {:.3f}".format(self.player, self.food, self.rep)
         
             
     
@@ -87,7 +90,7 @@ class Game(object):
         # Get beginning of round stats        
         self.round += 1
         if(self.verbose):
-            print ("Begin Round " + str(self.round) + ":\n")
+            print ("\nBegin Round " + str(self.round) + ":")
         m = self.calculate_m()
         
         # Beginning of round setup
@@ -113,11 +116,14 @@ class Game(object):
                 results[j][i] = payout(strategies[j][i], strategies[i][j])
                 
         total_hunts = sum(s.count('h') for s in strategies)		
+        
+        if (self.verbose):
+            print ("There were {} hunts of {} needed for bonus".format(total_hunts, self.m_bonus))
 
         if total_hunts >= self.m_bonus:
             bonus = m 
             if (self.verbose):
-                print('Cooperation Threshold Acheived. Bonus of ' + str(m) + ' awarded to each player.')
+                print("Cooperation Threshold Acheived. Bonus of " + str(m) + " awarded to each player")
         else:
 	        bonus = 0
         
@@ -134,16 +140,21 @@ class Game(object):
                     
         if self.verbose:
             for p in self.players:
-                print ("Player {} now has {} food and a reputation of {:.3f}".format(p.player, p.food, p.rep))
+                print (p)
                    
         
         if self.game_over():            
-            print ("Game Completed")
+            print ("Game Completed after {} rounds".format(self.round))
             raise StopIteration
             
         
     def game_over(self):        
+        starved = [p for p in self.players if p.food <= 0]
+        for p in starved:
+            print ("{} has starved and been eliminated in round {}".format(p.player.name, self.round))
+        
         self.players = [p for p in self.players if p.food > 0]
+        
         return (self.P < 2) or (self.round > self.max_rounds)
         
         
@@ -159,11 +170,13 @@ class Game(object):
                 self.play_round()
             except StopIteration:
                 if len(self.players) <= 0:
-                    print ("Everyone starved.")
+                    print ("Everyone starved")
                 elif (len(self.players) == 1):
                     print ("The winner is: " + self.players[0].player.name)
                 else:
-                    print ("Multiple winners:")
-                    print (self.players)
+                    survivors = sorted(self.players, key=lambda player: player.food, reverse=True)
+                    print ("The winner is: " + survivors[0].player.name)
+                    print ("Multiple survivors:")
+                    print (survivors)
                 break
         
