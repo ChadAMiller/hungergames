@@ -108,12 +108,12 @@ class Game(object):
 
         # Perform the hunts
         self.hunt_opportunities += self.P-1
-        results = [[0 for i in range(self.P)] for j in range(self.P)]                        
-        
+
+        results = [[] for j in range(self.P)]
         for i in range(self.P):
-            for j in range(i+1, self.P):
-                results[i][j] = payout(strategies[i][j], strategies[j][i])
-                results[j][i] = payout(strategies[j][i], strategies[i][j])
+            for j in range(self.P):
+                if i!=j:
+                    results[i].append(payout(strategies[i][j], strategies[j][i]))
                 
         total_hunts = sum(s.count('h') for s in strategies)		
         
