@@ -18,7 +18,7 @@ class Pushover(BasePlayer):
 
         
 class Freeloader(BasePlayer):
-    '''Player that never hunts.'''
+    '''Player that always slacks.'''
     
     def __init__(self):
         self.name = "Freeloader"
@@ -35,7 +35,7 @@ class Freeloader(BasePlayer):
         
 
 class Alternator(BasePlayer):
-    '''Player that alternates between hunting and not.'''
+    '''Player that alternates between hunting and slacking.'''
     def __init__(self):
         self.name = "Alternator"
         self.last_played = 's'
@@ -68,11 +68,16 @@ class MaxRepHunter(BasePlayer):
                     m,
                     player_reputations,
                     ):
-        return ['h' if rep == max(player_reputations) else 's' for rep in player_reputations]
+        threshold = max(player_reputations)
+        return ['h' if rep == threshold else 's' for rep in player_reputations]
 
 
 class Random(BasePlayer):
-    '''Player that hunts with probability p_hunt and slacks with probability 1-p_hunt'''
+    '''
+    Player that hunts with probability p_hunt and
+    slacks with probability 1-p_hunt
+    '''
+    
     def __init__(self, p_hunt):
         self.name = "Random"
         self.p_hunt = p_hunt
@@ -85,5 +90,5 @@ class Random(BasePlayer):
                     m,
                     player_reputations,
                     ):
-        return ['h' if random.random() < self.p_hunt else 's' for i in range(len(player_reputations))]
+        return ['h' if random.random() < self.p_hunt else 's' for p in player_reputations]
         
