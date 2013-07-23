@@ -84,8 +84,10 @@ class Game(object):
             
         
     def play_round(self):
-        # Get beginning of round stats
+        # Get beginning of round stats        
         self.round += 1
+        if(self.verbose):
+            print ("Begin Round " + str(self.round) + ":\n")
         m = self.calculate_m()
         
         # Beginning of round setup
@@ -110,8 +112,14 @@ class Game(object):
                 results[i][j] = payout(strategies[i][j], strategies[j][i])
                 results[j][i] = payout(strategies[j][i], strategies[i][j])
                 
-        total_hunts = sum(s.count('h') for s in strategies)
-        bonus = self.m_bonus if total_hunts >= m else 0
+        total_hunts = sum(s.count('h') for s in strategies)		
+
+        if total_hunts >= self.m_bonus:
+            bonus = m 
+            if (self.verbose):
+                print('Cooperation Threshold Acheived. Bonus of ' + str(m) + ' awarded to each player.')
+        else:
+	        bonus = 0
         
         # Award food and let players run cleanup tasks
         for strat, result, player in zip(strategies, results, self.players):
@@ -125,14 +133,16 @@ class Game(object):
             
                     
         if self.verbose:
-            print(self.players)
+            for p in self.players:
+                print ("Player {} now has {} food and a reputation of {:.3f}".format(p.player, p.food, p.rep))
                    
         
-        if self.game_over():
+        if self.game_over():            
+            print ("Game Completed")
             raise StopIteration
             
         
-    def game_over(self):
+    def game_over(self):        
         self.players = [p for p in self.players if p.food > 0]
         return (self.P < 2) or (self.round > self.max_rounds)
         
@@ -142,11 +152,18 @@ class Game(object):
         Preferred way to run the game to completion
         Written this way so that I can step through rounds one at a time
         '''
+        print ("Let the Game Begin!")
         
         while True:
             try:
                 self.play_round()
             except StopIteration:
-                print(self.players)
+                if len(self.players) <= 0:
+                    print ("Everyone starved.")
+                elif (len(self.players) == 1):
+                    print ("The winner is: " + self.players[0].player.name)
+                else:
+                    print ("Multiple winners:")
+                    print (self.players)
                 break
         
