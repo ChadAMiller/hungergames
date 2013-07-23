@@ -6,5 +6,5 @@ from bots import Pushover, Freeloader, Alternator
 
 if __name__ == '__main__':
     players = [Pushover(), Freeloader(), Alternator()]
-    game = Game(players, False)
+    game = Game(players)
     game.play_game()
