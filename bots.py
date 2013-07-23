@@ -37,10 +37,7 @@ class Alternator(BasePlayer):
     '''Player that alternates between hunting and not.'''
     def __init__(self):
         self.name = "Alternator"
-        self.moves = ['s', 'h']
-        
-    def update_strat(self):
-        self.moves.reverse()
+        self.last_played = 's'
         
     def hunt_choices(
                     self,
@@ -50,8 +47,12 @@ class Alternator(BasePlayer):
                     m,
                     player_reputations,
                     ):
-        self.update_strat()
-        return [self.moves[0]]*len(player_reputations)
+        hunt_decisions = []
+        for i in range(len(player_reputations)):
+            self.last_played = 'h' if self.last_played == 's' else 's'
+            hunt_decisions.append(self.last_played)
+            
+        return hunt_decisions
 
 class MaxRepHunter(BasePlayer):
     '''Player that hunts only with people with max reputation.'''
