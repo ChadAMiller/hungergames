@@ -52,4 +52,19 @@ class Alternator(BasePlayer):
                     ):
         self.update_strat()
         return [self.moves[0]]*len(player_reputations)
+
+class MaxRepHunter(BasePlayer):
+    '''Player that hunts only with people with max reputation.'''
+    def __init__(self):
+        self.name = "MaxRepHunter"
+
+    def hunt_choices(
+                    self,
+                    round_number,
+                    current_food,
+                    current_reputation,
+                    m,
+                    player_reputations,
+                    ):
+        return ['h' if rep == max(player_reputations) else 's' for rep in player_reputations]
         
