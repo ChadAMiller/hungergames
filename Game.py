@@ -118,12 +118,12 @@ class Game(object):
         total_hunts = sum(s.count('h') for s in strategies)		
         
         if (self.verbose):
-            print ("There were {} hunts of {} needed for bonus".format(total_hunts, self.m_bonus))
+            print ("There were {} hunts of {} needed for bonus".format(total_hunts, m))
 
-        if total_hunts >= self.m_bonus:
-            bonus = m 
+        if total_hunts >= m:
+            bonus = self.m_bonus
             if (self.verbose):
-                print("Cooperation Threshold Acheived. Bonus of " + str(m) + " awarded to each player")
+                print("Cooperation Threshold Acheived. Bonus of {} awarded to each player".format(self.m_bonus))
         else:
 	        bonus = 0
         
