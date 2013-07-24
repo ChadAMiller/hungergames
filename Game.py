@@ -115,7 +115,7 @@ class Game(object):
                 if i!=j:
                     results[i].append(payout(strategies[i][j], strategies[j][i]))
                 
-        total_hunts = sum(s.count('h') for s in strategies)		
+        total_hunts = sum(s.count('h') for s in strategies
         
         if (self.verbose):
             print ("There were {} hunts of {} needed for bonus".format(total_hunts, self.m_bonus))
@@ -125,7 +125,7 @@ class Game(object):
             if (self.verbose):
                 print("Cooperation Threshold Acheived. Bonus of " + str(m) + " awarded to each player")
         else:
-	        bonus = 0
+            bonus = 0
         
         # Award food and let players run cleanup tasks
         for strat, result, player in zip(strategies, results, self.players):
