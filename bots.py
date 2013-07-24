@@ -107,3 +107,37 @@ class FairHunter(BasePlayer):
                 ):
         return ['h' if random.random() < rep else 's' for rep in player_reputations]
         
+class BoundedHunter(BasePlayer):
+    '''Player that hunts whenever the other's reputation is within some range.'''
+    def __init__(self,lower,upper):
+        self.name = "BoundedHunter" + str(lower)+'-'+str(upper)
+        self.low = lower
+        self.up = upper
+
+    def hunt_choices(
+                    self,
+                    round_number,
+                    current_food,
+                    current_reputation,
+                    m,
+                    player_reputations,
+                    ):
+        return ['h' if self.low <= rep <= self.up else 's' for rep in player_reputations]
+        
+class AverageHunter(BasePlayer):
+    '''Player that tries to maintain the average reputation, but spreads its hunts randomly.'''
+    
+    def __init__(self):
+        self.name = "AverageHunter"
+
+    def hunt_choices(
+                    self,
+                    round_number,
+                    current_food,
+                    current_reputation,
+                    m,
+                    player_reputations,
+                    ):
+        avg_rep = sum(player_reputations) / float(len(player_reputations))
+        return ['h' if random.random() < avg_rep else 's' for rep in player_reputations]
+        
