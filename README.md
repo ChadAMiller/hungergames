@@ -4,17 +4,11 @@ This is an implementation of a test engine for [Brilliant.org's Hunger Games Com
 
 This is an OOP solution where player classes are expected to inherit from a base `Player` class. The `Game` class only expects the methods required by the competition (`hunt_choices`, `hunt_outcomes`, `round_end`).
 
-I included the three sample players from the sample code, under the names `Pushover`, `Freeloader`, and `Alternator`.
-
-There are a couple other sample players implemented in bots.py.  These are `Random`, `MaxRepHunter`, and `FairHunter`.  
-
-The Random player decides to hunt with some probability p and slack with probability 1-p.  You can decide this probability when the player is created.  For a Random player that hunts 50% of the time and slacks 50% of the time you would create the player with Random(0.5).
-
-The MaxRepHunter is a player who only hunts with players who have the current maximum reputation.  A common question in the discussion section was how to beat someone who only slacks (Freeloader).  A pair of MaxRephunter's will beat a group of any size of Freeloaders.  Give it a shot.
-
-The FairHunter is a player who tries to play fair by hunting with probability equal to opponents reputation.  This means he will hunt with hunters and slack with slackers.  He never tries to take advantage of hunters.
+`bots.py` includes the three sample players from the sample code, under the names `Pushover`, `Freeloader`, and `Alternator`. It also contains some user-submitted strategies.
 
 ## Usage
+
+*    First, try `python unittest.py`. You will see some test output. If the last line says anything except `OK`, there is a bug. Please let me know (see "Bugs", below).
 
 *    `python app.py` runs a sample game with exactly one of each test bot. It's 3 lines of code and pretty easy to generalize to whatever custom players you might make up.
 
@@ -22,15 +16,15 @@ The FairHunter is a player who tries to play fair by hunting with probability eq
 
 *    If you're new to Python and just want to test a given solution against the builtin robots, edit `Player.py` and fill your solution in the class at the bottom.
 
-*    You can modify the maximum and average number of rounds using parameters to the `Game` initializer, e.g. `game = Game(players, min_rounds = 1000, average_rounds = 20000)`. An easy way to see the options is `pydoc Game.Game`.
+*    You can modify the maximum and average number of rounds using parameters to the `Game` initializer, e.g. `game = Game(players, min_rounds=1000, average_rounds=20000)`. An easy way to see the options is `pydoc Game.Game`, or by entering the shell with `python` and typing `from Game import Game; help(Game)`.
 
-*    All players inherit from `Player.BasePlayer`. If you're going to stay synched with this repo, it's a good idea to keep it that way in case we add features like better pretty-printing.
+*    All players inherit from `Player.BasePlayer`.
 
 ## Official Solution
 
-The goal is for `Player.py` to be a valid contest submission. To verify against Brilliant's official test script (included in this repo), run `python tester.py Player.py`. If this errors before you've edited anything, I have a bug. Please let me know.
+The goal is for `Player.py` to be a valid contest submission. To verify against Brilliant's official test script (included in this repo), run `python tester.py Player.py` or `python unittest.py`.
 
-I will deliberately be keeping this repo free of *any* strategic information until after the contest, so that using code from it is not cheating. You may copy/modify whatever you want.
+I will deliberately be keeping this repo free of *any* strategic information until after the contest, so that using code from it is not cheating. You may copy/modify/submit whatever you want.
 
 ## Bugs
 
@@ -42,7 +36,7 @@ Thanks to the many people who've submitted/suggested changes! I've already gotte
 
 *    I tend to code all at once in single sessions, so whatever you want to do, you're probably not duplicating my work. This is especially true if I posted the Issue myself. If you want to do something, go for it.
 
-*    `python tester.py Player.py` must pass at all times.
+*    `python unittest.py` must pass at all times. If your code is failing tests but you believe there is an error in the test, post a comment with your pull request or open an Issue (even if you know how to fix it; I want to know if my understanding of the game is wrong).
 
 *    Any instance of `Game.py` must conform to the official rules 100%. Any player-visible difference between `Game.py` and the official rules is a bug.
 
