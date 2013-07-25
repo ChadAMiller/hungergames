@@ -139,7 +139,8 @@ class Game(object):
             
                     
         if self.verbose:
-            for p in self.players:
+            newlist = sorted(self.players, key=lambda x: x.food, reverse=True)
+            for p in newlist:
                 print (p)
                    
         
