@@ -111,13 +111,15 @@ class TestTwoPlayer(unittest.TestCase):
         self.assertEqual(self.game.players[1].rep, 0.0)
         
         # Make sure data sent to player classes is right
+        # Note that after this point, self.players[0] is not
+        # necessarily self.game.players[0] because of shuffling
         self.game.play_round()
         self.assertEqual(self.players[0].food, 302)
         self.assertEqual(self.players[0].rep, 0)
         
         self.game.play_round()
-        self.assertEqual(self.players[1].food, 304)
-        self.assertEqual(self.players[1].rep, 1.0)
+        self.assertEqual(self.players[0].food, 304)
+        self.assertEqual(self.players[0].rep, 1.0)
         
         # Test that Game is sending the correct arguments to BasePlayers       
         self.assertEqual(self.players[0].hunt_choices_args,
@@ -126,11 +128,13 @@ class TestTwoPlayer(unittest.TestCase):
         self.assertEqual(self.players[0].hunt_outcomes_args, ([0],))
         self.assertEqual(self.players[0].round_end_args, (2, 1, 2))
         
-        # Test that Game stayed synched with Player. Note that
-        # self.players[0] is not necessarily self.game.players[0] because
-        # of shuffling
+        # Test that Game stayed synched with Player.
         self.assertEqual(self.players[0].food, self.game.players[0].food)
         self.assertEqual(self.players[0].rep, self.game.players[0].rep)
+        
+    def test_full_game(self):
+        #Make sure the game runs to completion without errors
+        self.game.play_game()
         
         
     def test_m(self):

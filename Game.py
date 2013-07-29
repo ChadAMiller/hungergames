@@ -148,7 +148,7 @@ class Game(object):
     def game_over(self):        
         starved = [p for p in self.players if p.food <= 0]
         for p in starved:
-            print ("{} has starved and been eliminated in round {}".format(p.player.name, self.round))
+            print ("{} has starved and been eliminated in round {}".format(p.player, self.round))
         
         self.players = [p for p in self.players if p.food > 0]
         
@@ -169,10 +169,10 @@ class Game(object):
                 if len(self.players) <= 0:
                     print ("Everyone starved")
                 elif (len(self.players) == 1):
-                    print ("The winner is: " + self.players[0].player.name)
+                    print ("The winner is: ", self.players[0].player)
                 else:
                     survivors = sorted(self.players, key=lambda player: player.food, reverse=True)
-                    print ("The winner is: " + survivors[0].player.name)
+                    print ("The winner is: ", survivors[0].player)
                     print ("Multiple survivors:")
                     print (survivors)
                 break
