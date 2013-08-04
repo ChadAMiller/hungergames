@@ -1,6 +1,8 @@
 from __future__ import division, print_function
 import random
 
+from Player import Player
+
 # Primary engine for the game simulation. You shouldn't need to edit
 # any of this if you're just testing strategies.
 
@@ -58,11 +60,12 @@ class Game(object):
     
     See app.py for a bare-minimum test game.
     '''   
-    def __init__(self, players, verbose=True, min_rounds=300, average_rounds=1000):
+    def __init__(self, players, verbose=True, min_rounds=300, average_rounds=1000, end_early=False):
         self.verbose = verbose
         self.max_rounds = min_rounds + int(random.expovariate(1/(average_rounds-min_rounds)))
         self.round = 0
         self.hunt_opportunities = 0
+        self.end_early = end_early
         
         self.players = players # to set self.P
         start_food = 300*(self.P-1)
@@ -140,19 +143,24 @@ class Game(object):
                 print (p)
                    
         
-        if self.game_over():            
+        if self.game_over():
             print ("Game Completed after {} rounds".format(self.round))
             raise StopIteration
             
         
     def game_over(self):        
         starved = [p for p in self.players if p.food <= 0]
+        quit = False
+
         for p in starved:
             print ("{} has starved and been eliminated in round {}".format(p.player, self.round))
-        
+
+            if isinstance(p.player, Player) and self.end_early:
+                quit = True
+
         self.players = [p for p in self.players if p.food > 0]
         
-        return (self.P < 2) or (self.round > self.max_rounds)
+        return (self.P < 2) or (self.round > self.max_rounds) or quit
         
         
     def play_game(self):
