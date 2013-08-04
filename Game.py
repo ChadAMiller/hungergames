@@ -45,7 +45,7 @@ class GamePlayer(object):
     
 class Game(object):
     '''
-    Game(players, verbose=True, min_rounds=300, average_rounds=1000)
+    Game(players, verbose=True, min_rounds=300, average_rounds=1000, end_early=False)
     
     Primary game engine for the sim. players should be a list of players
     as defined in Player.py or bots.py. verbose determines whether the game
@@ -54,6 +54,10 @@ class Game(object):
     Per the rules, the game has a small but constant probability of ending
     each round after min_rounds. The current defaults are completely arbitrary;
     feel free to play with them.
+
+    End_early is an option to allow you to better test your strategy.  If specified
+    as True, the game will end if the 'Player' player is eliminated (in addition
+    to ending if any of the other game end conditions are met).
         
     Call game.play_game() to run the entire game at once, or game.play_round()
     to run one round at a time.
@@ -62,6 +66,7 @@ class Game(object):
     '''   
     def __init__(self, players, verbose=True, min_rounds=300, average_rounds=1000, end_early=False):
         self.verbose = verbose
+        assert average_rounds >= min_rounds, "average_rounds must be at least the same as min_rounds"
         self.max_rounds = min_rounds + int(random.expovariate(1/(average_rounds-min_rounds)))
         self.round = 0
         self.hunt_opportunities = 0
@@ -71,8 +76,14 @@ class Game(object):
         start_food = 300*(self.P-1)
         
         self.players = [GamePlayer(self,p,start_food) for p in players]
-        
-        
+
+        if self.verbose:
+            print("Game parameters:\n # players: %d\n verbose: %s\n " \
+                  "min_rounds: %d\n average_rounds: %d\n " \
+                  "end_early: %s\n" % (len(players), verbose, \
+                                       min_rounds, average_rounds,
+                                       end_early))
+
     @property
     def m_bonus(self):
         return 2*(self.P-1)
@@ -169,7 +180,7 @@ class Game(object):
         Written this way so that I can step through rounds one at a time
         '''
         print ("Playing the game to the end:")
-        
+
         while True:
             try:
                 self.play_round()

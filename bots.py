@@ -79,6 +79,7 @@ class Random(BasePlayer):
     '''
     
     def __init__(self, p_hunt):
+        assert p_hunt >= 0.00 and p_hunt <= 1.00, "p_hunt must be at least 0 and at most 1"
         self.name = "Random" + str(p_hunt)
         self.p_hunt = p_hunt
 
