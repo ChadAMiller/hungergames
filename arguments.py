@@ -2,8 +2,9 @@ from __future__ import division, print_function
 from argparse import ArgumentParser
 
 from app import DEFAULT_VERBOSITY, DEFAULT_MIN_ROUNDS, \
-    DEFAULT_AVERAGE_ROUNDS, DEFAULT_END_EARLY
+    DEFAULT_AVERAGE_ROUNDS, DEFAULT_END_EARLY, DEFAULT_PLAYERS
 from bots import *
+from Player import Player
 
 
 def get_arguments():
@@ -15,21 +16,24 @@ def get_arguments():
     For help, run `python app.py -h` or `python app.py --help`
     '''
     parser = ArgumentParser()
-    bot_options = parser.add_argument_group("bots to use for game")
+    bot_options = parser.add_argument_group("bots to use for game")    
     bot_options.add_argument("-p", "--pushover", dest="pushover",
-                        default=1, type=int,
+                        default=0, type=int,
                         help="the number of Pushover bots to play with")
     bot_options.add_argument("-f", "--freeloader", dest="freeloader",
-                        default=1, type=int,
+                        default=0, type=int,
                         help="the number of Freeloader bots to play with")
     bot_options.add_argument("-a", "--alternator", dest="alternator",
-                        default=1, type=int,
+                        default=0, type=int,
                         help="the number of Alternator bots to play with")
     bot_options.add_argument("-m", "--max-rep-hunter", dest="mrp",
-                        default=1, type=int,
+                        default=0, type=int,
                         help="the number of MaxRepHunter bots to play with")
+    bot_options.add_argument("-pl", "--player", dest="player",
+                        default=0, type=int,
+                        help="number of Player bots as defined in Player.py")
     bot_options.add_argument("-r", "--random", dest="random",
-                        default=["1,.2", "1,.8"], nargs="*",
+                        default=[], nargs="*",
                         help="the number and value of Random bots to play " \
                         "with (in the form 'number,p_hunt' such that number " \
                         "is an int, and p_hunt is a float from 0-1)")
@@ -54,40 +58,25 @@ def get_arguments():
         "end_early": args.end_early,
     }
     bots = []
-
-    i = 0
-
-    while i < args.pushover:
-         bots += [Pushover()]
-         i += 1
-
-    i = 0
-
-    while i < args.freeloader:
-        bots += [Freeloader()]
-        i += 1
-
-    i = 0
-
-    while i < args.alternator:
-        bots += [Alternator()]
-        i += 1
-
-    i = 0
-
-    while i < args.mrp:
-        bots += [MaxRepHunter()]
-        i += 1
+    
+    bots.extend(
+        [Pushover() for _ in range(args.pushover)] +
+        [Freeloader() for _ in range(args.freeloader)] +
+        [Alternator() for _ in range(args.alternator)] +
+        [MaxRepHunter() for _ in range(args.mrp)] +
+        [Player() for _ in range(args.player)]
+        )
+        
 
     for r in args.random:
         (num, value) = r.split(",")
         num = int(num)
         value = float(value)
-        i = 0
+        
+        bots.extend([Random(value) for _ in range(num)])
 
-        while i < num:
-            bots += [Random(value)]
-            i += 1
 
-    return (bots, options)
+    players = bots if bots else DEFAULT_PLAYERS       
+        
+    return (players, options)
 

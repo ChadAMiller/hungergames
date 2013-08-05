@@ -66,14 +66,13 @@ class Game(object):
     '''   
     def __init__(self, players, verbose=True, min_rounds=300, average_rounds=1000, end_early=False):
         self.verbose = verbose
-        assert average_rounds >= min_rounds, "average_rounds must be at least the same as min_rounds"
+        assert average_rounds > min_rounds, "average_rounds must be greater than min_rounds"
         self.max_rounds = min_rounds + int(random.expovariate(1/(average_rounds-min_rounds)))
         self.round = 0
         self.hunt_opportunities = 0
         self.end_early = end_early
         
-        self.players = players # to set self.P
-        start_food = 300*(self.P-1)
+        start_food = 300*(len(players)-1)
         
         self.players = [GamePlayer(self,p,start_food) for p in players]
 

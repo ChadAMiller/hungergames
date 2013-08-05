@@ -16,7 +16,7 @@ This is an OOP solution where player classes are expected to inherit from a base
 
 *    If you're new to Python and just want to test a given solution against the builtin robots, edit `Player.py` and fill your solution in the class at the bottom.
 
-*    You can modify the Game options (ie: maximum and average number of rounds) with one of two mechanisms. 1) Editing the defaults in app.py.  For example `DEFAULT_AVERAGE_ROUNDS = 500`. 2) Specifying arguments through app.py (see `python app.py -h` for more information).
+*    You can modify the Game options (ie: maximum and average number of rounds) with one of two mechanisms. 1) Editing the defaults in app.py.  For example `DEFAULT_AVERAGE_ROUNDS = 500`. 2) Specifying command-line arguments through app.py (see `python app.py -h` for more information).
 
 *    All players inherit from `Player.BasePlayer`.
 
