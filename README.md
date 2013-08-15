@@ -30,6 +30,8 @@ I will deliberately be keeping this repo free of *any* strategic information unt
 
 If you find a bug, the fastest way to tell me is by submitting an issue on the [tracker](https://github.com/ChadAMiller/hungergames/issues) (I have email notification turned on). You can also email me (address in my [profile](https://github.com/ChadAMiller)).
 
+There is one known bug that won't be fixed: The official server will replace any errors with all-slacking in the event that a player returns an invalid result from `hunt_choices`. This simulation will crash if the output is not a list, and return nonsensical results if the list is the wrong length or contains invalid values. See the tracker for a suggested fix if you want to catch these kinds of problems.
+
 ## Patches/Pull Requests
 
 Thanks to the many people who've submitted/suggested changes! I've already gotten more help than I expected. I don't expect everybody to read all of the below, but here's where I'm coming from when I evaluate submissions:
